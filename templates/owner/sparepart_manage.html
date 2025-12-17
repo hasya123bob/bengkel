@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Manajemen Sparepart">
+    <meta name="author" content="Owner">
+    <title>Manajemen Sparepart</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <div class="dashboard-sidebar">
+        <div class="logo">Owner Bengkel</div>
+        <ul>
+          <li class="menu-title">Menu Utama</li>
+          <li><a href="{{ url_for('owner_dashboard') }}">Dashboard Owner</a></li>
+          <li><a href="{{ url_for('manage_employees') }}">Manajemen Karyawan</a></li>
+          <li><a href="{{ url_for('manage_services') }}">Manajemen Layanan Bengkel</a></li>
+          <li><a href="{{ url_for('manage_spareparts') }}" class="active">Manajemen Sparepart</a></li>
+          <li><a href="{{ url_for('manage_transactions') }}">Manajemen Transaksi</a></li>
+          <li><a href="{{ url_for('owner_reports') }}">Laporan</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Manajemen Sparepart</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">Owner</span>
+            <span class="badge badge-secondary">Owner</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main container-fluid mt-4">
+
+          <!-- Tabel Sparepart + ROP -->
+          <div class="row mb-4">
+            <div class="col-lg-12">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Daftar Sparepart</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Nama</th>
+                          <th>Harga</th>
+                          <th>Stok</th>
+                          <th>Reorder Point</th>
+                          <th>Keterangan</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for p in spareparts %}
+                        {% set rop = rop_map[p.id].rop if rop_map.get(p.id) else 0 %}
+                        <tr
+                          {% if rop > 0 and (p.stock or 0) <= rop %}
+                            class="table-warning"
+                          {% endif %}
+                        >
+                          <td>{{ p.id }}</td>
+                          <td>{{ p.name }}</td>
+                          <td>Rp {{ "{:,.0f}".format(p.price) }}</td>
+                          <td>{{ p.stock }}</td>
+                          <td>{{ rop }}</td>
+                          <td>
+                            {% if rop > 0 and (p.stock or 0) <= rop %}
+                              <span class="text-warning">Perlu restock</span>
+                            {% else %}
+                              <span class="text-success">Aman</span>
+                            {% endif %}
+                          </td>
+                          <td>
+                            <a href="{{ url_for('manage_spareparts', edit_id=p.id) }}"
+                              class="btn btn-sm btn-primary" style="min-width:70px;">Edit</a>
+
+                            <form action="{{ url_for('manage_spareparts') }}" method="post" style="display:inline;">
+                              <input type="hidden" name="action" value="delete">
+                              <input type="hidden" name="id" value="{{ p.id }}">
+                              <button type="submit" class="btn btn-sm btn-danger"
+                                      style="min-width:70px;"
+                                      onclick="return confirm('Hapus sparepart ini?');">
+                                Hapus
+                              </button>
+                            </form>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not spareparts %}
+                        <tr>
+                          <td colspan="7" class="text-center">Belum ada data sparepart.</td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Tambah / Edit -->
+          <div class="row">
+            <div class="col-lg-6 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">
+                    {% if edit_spare %}Edit Sparepart{% else %}Tambah Sparepart{% endif %}
+                  </h5>
+                </div>
+                <div class="card-body">
+                  {% if message %}
+                  <div class="alert alert-danger">{{ message }}</div>
+                  {% endif %}
+
+                  <form method="post" action="{{ url_for('manage_spareparts') }}">
+                    {% if edit_spare %}
+                      <input type="hidden" name="action" value="update">
+                      <input type="hidden" name="id" value="{{ edit_spare.id }}">
+                    {% else %}
+                      <input type="hidden" name="action" value="create">
+                    {% endif %}
+
+                    <div class="form-group">
+                      <label>Nama Sparepart</label>
+                      <input type="text" name="name" class="form-control"
+                             value="{{ edit_spare.name if edit_spare else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Stok</label>
+                      <input type="number" name="stock" class="form-control" min="0"
+                             value="{{ edit_spare.stock if edit_spare else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Harga (Rp)</label>
+                      <input type="number" name="price" class="form-control" min="0"
+                             value="{{ edit_spare.price if edit_spare else '' }}" required>
+                    </div>
+
+                    <button type="submit" class="filled-button mt-2">
+                      {% if edit_spare %}Update{% else %}Simpan{% endif %}
+                    </button>
+                    {% if edit_spare %}
+                    <a href="{{ url_for('manage_spareparts') }}" class="border-button mt-2">Batal</a>
+                    {% endif %}
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>

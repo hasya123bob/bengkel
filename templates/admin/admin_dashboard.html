@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Admin dashboard bengkel">
+    <meta name="author" content="Admin">
+
+    <title>Dashboard Admin Bengkel</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Sidebar -->
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Admin Iwan Bengkel
+        </div>
+        <ul>
+          <li class="menu-title">Menu Admin</li>
+          <li><a href="{{ url_for('admin_dashboard') }}" class="active">Dashboard Admin</a></li>
+          <li><a href="{{ url_for('admin_jobs') }}">Distribusi ke Karyawan</a></li>
+          <li><a href="{{ url_for('admin_stock') }}">Validasi Stok Sparepart</a></li>
+          <li><a href="{{ url_for('admin_report') }}">Laporan ke Pemilik</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <!-- Konten -->
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Dashboard Admin</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">{{ session.get('username', 'admin') }}</span>
+            <span class="badge badge-primary">Admin</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main">
+          <!-- Ringkasan kartu angka -->
+          <div class="row">
+            <div class="col-md-3 mb-4">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Total Karyawan</div>
+                  <div class="value">{{ stats.total_employees }}</div>
+                  <div class="trend">Siap menerima tugas</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-4">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Jenis Sparepart</div>
+                  <div class="value">{{ stats.total_spareparts }}</div>
+                  <div class="trend">Dikelola di gudang</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-4">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Total Transaksi</div>
+                  <div class="value">{{ stats.total_transactions }}</div>
+                  <div class="trend">Kendaraan yang diproses</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-4">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Transaksi Berjalan</div>
+                  <div class="value">{{ stats.open_transactions }}</div>
+                  <div class="trend">Perlu dipantau</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grafik transaksi & stok menipis -->
+          <div class="row">
+            <!-- Grafik transaksi bulan ini -->
+            <div class="col-lg-6 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Transaksi Bulan Ini</h5>
+                </div>
+                <div class="card-body">
+                  {% if chart_labels %}
+                  <canvas id="trxChart" height="150"></canvas>
+                  {% else %}
+                  <p>Belum ada transaksi pada bulan ini.</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Stok sparepart menipis -->
+            <div class="col-lg-6 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Stok Sparepart Menipis</h5>
+                </div>
+                <div class="card-body">
+                  {% if low_stock_list %}
+                    <div class="table-responsive" style="max-height:220px; overflow-y:auto;">
+                      <table class="table table-sm mb-0">
+                        <thead>
+                          <tr>
+                            <th>Nama</th>
+                            <th>Stok</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for p in low_stock_list %}
+                          <tr>
+                            <td>{{ p.name }}</td>
+                            <td>{{ p.stock }}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <p>Semua stok sparepart dalam kondisi aman.</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div><!-- /.dashboard-main -->
+      </div><!-- /.dashboard-content -->
+    </div><!-- /.dashboard-wrapper -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+      {% if chart_labels %}
+      const labels = JSON.parse('{{ chart_labels | tojson | safe }}');
+      const values = JSON.parse('{{ chart_values | tojson | safe }}');
+
+      const ctx = document.getElementById('trxChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total (Rp)',
+            data: values,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+      {% endif %}
+    </script>
+  </body>
+</html>

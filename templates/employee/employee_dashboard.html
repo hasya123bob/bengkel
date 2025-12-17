@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Dashboard Karyawan Bengkel Mobil">
+    <meta name="author" content="Karyawan">
+
+    <title>Dashboard Karyawan</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Sidebar -->
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Karyawan Iwan Bengkel
+        </div>
+        <ul>
+          <li class="menu-title">Menu Karyawan</li>
+          <li><a href="{{ url_for('employee_dashboard') }}" class="active">Dashboard Karyawan</a></li>
+          <li><a href="{{ url_for('employee_attendance') }}">Presensi Kehadiran</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <!-- Konten -->
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Dashboard Karyawan</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">
+              {{ employee.name if employee else session.get('username','karyawan') }}
+            </span>
+            <span class="badge badge-success">Karyawan</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main container-fluid mt-4">
+          <!-- Ringkasan tugas -->
+          <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Total Pekerjaan</div>
+                  <div class="value">{{ stats.total_jobs }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Sedang Dikerjakan</div>
+                  <div class="value">{{ stats.jobs_in_progress }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Selesai</div>
+                  <div class="value">{{ stats.jobs_done }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daftar pekerjaan -->
+          <div class="row">
+            <div class="col-lg-12 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Daftar Pekerjaan Saya</h5>
+                </div>
+                <div class="card-body">
+                  <p class="mb-3">
+                    Karyawan menerima data kondisi mobil dari Admin, mengerjakan sesuai catatan, lalu mengirim status pengerjaan kembali ke Admin.
+                  </p>
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                      <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Tanggal</th>
+                          <th>Pelanggan</th>
+                          <th>Layanan</th>
+                          <th>Sparepart</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th>Update Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for t in jobs %}
+                        <tr>
+                          <td>{{ t.id }}</td>
+                          <td>{{ t.date }}</td>
+                          <td>{{ t.customer }}</td>
+                          <td>{{ t.service_name }}</td>
+                          <td>{{ t.sparepart_name or '-' }}</td>
+                          <td>Rp {{ "{:,.0f}".format(t.total or 0) }}</td>
+                          <td>{{ t.status }}</td>
+                          <td>
+                            <form method="post" action="{{ url_for('employee_update_job') }}" class="form-inline">
+                              <input type="hidden" name="id" value="{{ t.id }}">
+                              <select name="status" class="form-control form-control-sm mr-2">
+                                {% set s = t.status %}
+                                <option value="Proses" {% if s == 'Proses' %}selected{% endif %}>Proses</option>
+                                <option value="Selesai" {% if s == 'Selesai' %}selected{% endif %}>Selesai</option>
+                              </select>
+                              <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            </form>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not jobs %}
+                        <tr>
+                          <td colspan="8" class="text-center">Belum ada pekerjaan yang ditugaskan.</td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- /.dashboard-main -->
+      </div> <!-- /.dashboard-content -->
+    </div> <!-- /.dashboard-wrapper -->
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>

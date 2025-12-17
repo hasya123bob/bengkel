@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="TemplateMo">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+
+    <title>IWAN BENGKEL</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+  </head>
+
+  <body>
+    <!-- ***** Preloader Start ***** -->
+    <div id="preloader">
+      <div class="jumper">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <!-- ***** Preloader End ***** -->
+
+    <!-- Header -->
+    <div class="sub-header">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-xs-12">
+            <ul class="left-info">
+              <li><a href="#"><i class="fa fa-clock-o"></i>Mon-Sat 09:00-17:00</a></li>
+              <li><a href="#"><i class="fa fa-phone"></i>+62 878-3812-2012</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <header class="">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('index') }}"><h2>IWAN BENGKEL</h2></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="#top">Home
+                  <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('about') }}">About Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('contact') }}">Contact Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+              </li>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Page Content -->
+    <!-- Banner Starts Here -->
+    <div class="main-banner header-text" id="top">
+      <div class="Modern-Slider">
+        <!-- Item -->
+        <div class="item item-1">
+          <div class="img-fill">
+            <div class="text-content">
+              <h6>SIAP MELAYANI KEBUTUHAN SERVIS MOBIL ANDA</h6>
+              <h4>SERVIS & PERBAIKAN MOBIL</h4>
+              <p style="text-align: justify;">Kami melayani servis ringan hingga berat, mulai dari ganti oli, tune up, cek rem, sampai perbaikan mesin dan sistem elektrik mobil. Setiap pekerjaan mengikuti prosedur standar bengkel dan pengecekan menyeluruh agar mobil kembali nyaman dan aman digunakan.</p>
+            </div>
+          </div>
+        </div>
+        <!-- // Item -->
+        <!-- Item -->
+        <div class="item item-2">
+          <div class="img-fill">
+            <div class="text-content">
+              <h6>KAMI SIAP MENDUKUNG PERAWATAN MOBIL ANDA</h6>
+              <h4>LAYANAN SERVIS<br>&amp; PERBAIKAN</h4>
+              <p style="text-align: justify;">Layanan kami didukung dengan pemilihan sparepart yang sesuai dengan kebutuhan dan kondisi mobil. Proses perbaikan direncanakan dengan rapi, termasuk estimasi waktu dan biaya, sehingga pemilik kendaraan bisa menyiapkan jadwal dan anggaran dengan tenang.</p>
+            </div>
+          </div>
+        </div>
+        <!-- // Item -->
+        <!-- Item -->
+        <div class="item item-3">
+          <div class="img-fill">
+            <div class="text-content">
+              <h6>PENGALAMAN BENGKEL YANG TERUKUR</h6>
+              <h4>ANALISIS KINERJA <br>&amp; LAPORAN BENGKEL</h4>
+              <p style="text-align: justify;">Melalui sistem informasi bengkel, pelanggan dapat memantau progres servis, rincian transaksi, dan riwayat perbaikan kendaraan secara real time. Pemilik bengkel juga memperoleh laporan kinerja yang terstruktur untuk membantu pengambilan keputusan dan pengelolaan operasional harian.</p>
+            </div>
+          </div>
+        </div>
+        <!-- // Item -->
+      </div>
+    </div>
+
+    <div class="services">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="section-heading">
+              <h2>Layanan <em>Bengkel</em></h2>
+              <span>Layanan Servis & Perawatan Mobil</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="service-item">
+              <img src="{{ url_for('static', filename='images/service_01.jpg') }}" alt="">
+              <div class="down-content">
+                <h4>Servis & Perawatan Berkala</h4>
+                <p style="text-align: justify;">Layanan perawatan rutin seperti ganti oli, cek rem, dan pengecekan umum untuk menjaga performa mobil tetap optimal dan aman digunakan.</p>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="service-item">
+              <img src="{{ url_for('static', filename='images/service_02.jpg') }}" alt="">
+              <div class="down-content">
+                <h4>Servis Kerusakan & Diagnose</h4>
+                <p style="text-align: justify;">Penanganan berbagai keluhan dan kerusakan pada mesin, kaki-kaki, dan sistem kelistrikan dengan proses diagnose yang terstruktur sebelum pengerjaan.</p>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="service-item">
+              <img src="{{ url_for('static', filename='images/service_03.jpg') }}" alt="">
+              <div class="down-content">
+                <h4>Penggantian Sparepart</h4>
+                <p style="text-align: justify;">Penggantian sparepart sesuai kebutuhan dengan pencatatan yang rapi sehingga biaya, jenis suku cadang, dan riwayat perbaikan setiap kendaraan tercatat dengan jelas.</p>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fun-facts">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="left-content">
+              <span>STATISTIK KINERJA KAMI</span>
+              <h2>Solusi servis terbaik untuk <em>kendaraan Anda</em></h2>
+              <p style="text-align: justify;">Selama bertahun-tahun, Iwan Bengkel telah menangani berbagai kebutuhan perawatan dan perbaikan mobil harian dengan proses yang terencana, pencatatan yang rapi, dan layanan yang berfokus pada kepuasan pelanggan.
+              <br><br>Data di bawah ini menggambarkan aktivitas dan kepercayaan pelanggan terhadap layanan kami.</p>
+
+            </div>
+          </div>
+          <div class="col-md-6 align-self-center">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="count-area-content">
+                  <div class="count-digit">72</div>
+                  <div class="count-title">Servis Kendaraan Perminggu</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="count-area-content">
+                  <div class="count-digit">1000</div>
+                  <div class="count-title">Pelanggan Puas</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="count-area-content">
+                  <div class="count-digit">7</div>
+                  <div class="count-title">Tahun Pengalaman</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="count-area-content">
+                  <div class="count-digit">100</div>
+                  <div class="count-title">Pelanggan Tetap</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Starts Here -->
+    <div class="sub-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <p>Copyright &copy; 2025 Iwan Bengkel
+            
+            - Design: <a rel="nofollow noopener" href="https://templatemo.com" target="_blank">Pirgii</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+    <!-- Additional Scripts -->
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/owl.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/slick.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/accordions.js') }}"></script>
+
+    <script language="text/Javascript">
+      var cleared = [];
+      cleared[0] = cleared[1] = cleared[2] = 0;
+      function clearField(t){
+        if(!cleared[t.id]){
+          cleared[t.id] = 1;
+          t.value='';
+          t.style.color='#fff';
+        }
+      }
+    </script>
+  </body>
+</html>

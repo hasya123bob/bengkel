@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Manajemen Layanan Bengkel">
+    <meta name="author" content="Owner">
+
+    <title>Manajemen Layanan Bengkel</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Sidebar -->
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Owner Bengkel
+        </div>
+        <ul>
+          <li class="menu-title">Menu Utama</li>
+          <li><a href="{{ url_for('owner_dashboard') }}">Dashboard Owner</a></li>
+          <li><a href="{{ url_for('manage_employees') }}">Manajemen Karyawan</a></li>
+          <li><a href="{{ url_for('manage_services') }}" class="active">Manajemen Layanan Bengkel</a></li>
+          <li><a href="{{ url_for('manage_spareparts') }}">Manajemen Sparepart</a></li>
+          <li><a href="{{ url_for('manage_transactions') }}">Manajemen Transaksi</a></li>
+          <li><a href="{{ url_for('owner_reports') }}">Laporan</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Manajemen Layanan Bengkel</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">test</span>
+            <span class="badge badge-secondary">Owner</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main container-fluid mt-4">
+          <div class="row">
+            <!-- Form Tambah / Edit -->
+            <div class="col-lg-5 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">
+                    {% if edit_service %}
+                      Edit Layanan
+                    {% else %}
+                      Tambah Layanan
+                    {% endif %}
+                  </h5>
+                </div>
+                <div class="card-body">
+                  {% if message %}
+                  <div class="alert alert-danger">{{ message }}</div>
+                  {% endif %}
+
+                  <form method="post" action="{{ url_for('manage_services') }}">
+                    {% if edit_service %}
+                      <input type="hidden" name="action" value="update">
+                      <input type="hidden" name="id" value="{{ edit_service.id }}">
+                    {% else %}
+                      <input type="hidden" name="action" value="create">
+                    {% endif %}
+
+                    <div class="form-group">
+                      <label>Nama Layanan</label>
+                      <input type="text" name="name" class="form-control"
+                             value="{{ edit_service.name if edit_service else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Harga (Rp)</label>
+                      <input type="number" name="price" class="form-control" min="0"
+                             value="{{ edit_service.price if edit_service else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Deskripsi</label>
+                      <textarea name="description" class="form-control" rows="3">{{ edit_service.description if edit_service else '' }}</textarea>
+                    </div>
+
+                    <button type="submit" class="filled-button mt-2">
+                      {% if edit_service %}Update{% else %}Simpan{% endif %}
+                    </button>
+
+                    {% if edit_service %}
+                      <a href="{{ url_for('manage_services') }}" class="border-button mt-2">Batal</a>
+                    {% endif %}
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabel Layanan -->
+            <div class="col-lg-7 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Daftar Layanan</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Nama</th>
+                          <th>Harga</th>
+                          <th>Deskripsi</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for s in services %}
+                        <tr>
+                          <td>{{ s.id }}</td>
+                          <td>{{ s.name }}</td>
+                          <td>Rp {{ "{:,.0f}".format(s.price) }}</td>
+                          <td>{{ s.description }}</td>
+                          <td>
+                            <a href="{{ url_for('manage_services', edit_id=s.id) }}" class="btn btn-sm btn-primary">Edit</a>
+
+                            <form action="{{ url_for('manage_services') }}" method="post" style="display:inline;">
+                              <input type="hidden" name="action" value="delete">
+                              <input type="hidden" name="id" value="{{ s.id }}">
+                              <button type="submit" class="btn btn-sm btn-danger"
+                                      onclick="return confirm('Hapus layanan ini?');">
+                                Hapus
+                              </button>
+                            </form>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+[
+  {
+    "id": 1,
+    "name": "Budi",
+    "user_id": 4,
+    "position": "Mekanik",
+    "status": "Aktif"
+  },
+  {
+    "id": 3,
+    "name": "Andi",
+    "position": "Admin",
+    "status": "Cuti"
+  },
+  {
+    "id": 4,
+    "name": "Joni",
+    "position": "Mekanik",
+    "status": "Aktif"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Oli Mesin 10W-40",
+    "stock": 63,
+    "price": 75000
+  },
+  {
+    "id": 2,
+    "name": "Kampas Rem Depan",
+    "stock": 26,
+    "price": 55000.0
+  },
+  {
+    "id": 3,
+    "name": "Busi",
+    "stock": 39,
+    "price": 25000.0
+  },
+  {
+    "id": 4,
+    "name": "agoy",
+    "stock": 21320,
+    "price": 20000.0
+  }
+]

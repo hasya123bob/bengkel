@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Riwayat Booking Servis">
+    <meta name="author" content="Customer">
+
+    <title>Riwayat Booking</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Customer Bengkel Mobil
+        </div>
+        <ul>
+          <li class="menu-title">Menu Customer</li>
+          <li><a href="{{ url_for('customer_dashboard') }}">Dashboard Customer</a></li>
+          <li><a href="{{ url_for('customer_booking') }}">Booking Servis</a></li>
+          <li><a href="{{ url_for('customer_booking_history') }}" class="active">Riwayat Booking</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Riwayat Booking Servis</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">{{ customer_name }}</span>
+            <span class="badge badge-info">Customer</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main container-fluid mt-4">
+          <div class="card-section">
+            <div class="card-header">
+              <h5 class="mb-0">Daftar Booking Saya</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped mb-0">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Tanggal</th>
+                      <th>Jam</th>
+                      <th>Layanan</th>
+                      <th>Sparepart</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for b in bookings %}
+                    <tr>
+                      <td>{{ b.id }}</td>
+                      <td>{{ b.date }}</td>
+                      <td>{{ b.time }}</td>
+                      <td>{{ b.service.name if b.service else '-' }}</td>
+                      <td>
+                        {% if b.items %}
+                          <ol style="margin-bottom:0; padding-left:18px;">
+                            {% for item in b.items %}
+                            <li>{{ item.sparepart.name }} x{{ item.qty }}</li>
+                            {% endfor %}
+                          </ol>
+                        {% else %}
+                          -
+                        {% endif %}
+                      </td>
+                      <td>{{ b.status }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not bookings %}
+                    <tr>
+                      <td colspan="6" class="text-center">Belum ada booking servis.</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>

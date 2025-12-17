@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Manajemen Transaksi">
+    <meta name="author" content="Owner">
+
+    <title>Manajemen Transaksi</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Owner Bengkel
+        </div>
+        <ul>
+          <li class="menu-title">Menu Utama</li>
+          <li><a href="{{ url_for('owner_dashboard') }}">Dashboard Pemilik</a></li>
+          <li><a href="{{ url_for('manage_employees') }}">Manajemen Karyawan</a></li>
+          <li><a href="{{ url_for('manage_services') }}">Manajemen Layanan Bengkel</a></li>
+          <li><a href="{{ url_for('manage_spareparts') }}">Manajemen Sparepart</a></li>
+          <li><a href="{{ url_for('manage_transactions') }}" class="active">Manajemen Transaksi</a></li>
+          <li><a href="{{ url_for('owner_reports') }}">Laporan</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Manajemen Transaksi</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">Owner</span>
+            <span class="badge badge-secondary">Owner</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main container-fluid mt-4">
+          <div class="row">
+            <!-- Tabel Transaksi (atas) -->
+            <div class="col-lg-12 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Daftar Transaksi</h5>
+                </div>
+                <div class="card-body">
+                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                  <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Tanggal</th>
+                          <th>Pelanggan</th>
+                          <th>Layanan</th>
+                          <th>Sparepart</th>
+                          <th>Harga Layanan</th>
+                          <th>Harga Sparepart</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                          <td>{{ t.id }}</td>
+                          <td>{{ t.date }}</td>
+                          <td>{{ t.customer }}</td>
+                          <td>{{ t.service_name }}</td>
+                          <td>{{ t.sparepart_name or '-' }}</td>
+                          <td>Rp {{ "{:,.0f}".format(t.price_service or 0) }}</td>
+                          <td>
+                            {% if t.price_spare %}
+                              Rp {{ "{:,.0f}".format(t.price_spare) }}
+                            {% else %}
+                              -
+                            {% endif %}
+                          </td>
+                          <td>Rp {{ "{:,.0f}".format(t.total or 0) }}</td>
+                          <td>{{ t.status }}</td>
+                          <td>
+                            <a href="{{ url_for('manage_transactions', edit_id=t.id) }}"
+                              class="btn btn-sm btn-primary" style="min-width:70px;">Edit</a>
+
+                            <form action="{{ url_for('manage_transactions') }}" method="post" style="display:inline;">
+                              <input type="hidden" name="action" value="delete">
+                              <input type="hidden" name="id" value="{{ t.id }}">
+                              <button type="submit" class="btn btn-sm btn-danger"
+                                      style="min-width:70px;"
+                                      onclick="return confirm('Hapus transaksi ini?');">
+                                Hapus
+                              </button>
+                            </form>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not transactions %}
+                        <tr>
+                          <td colspan="10" class="text-center">Belum ada transaksi.</td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Tambah / Edit (bawah) -->
+            <div class="col-lg-6 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">
+                    {% if edit_trx %}
+                      Edit Transaksi
+                    {% else %}
+                      Tambah Transaksi
+                    {% endif %}
+                  </h5>
+                </div>
+                <div class="card-body">
+                  {% if message %}
+                  <div class="alert alert-danger">{{ message }}</div>
+                  {% endif %}
+
+                  <form method="post" action="{{ url_for('manage_transactions') }}">
+                    {% if edit_trx %}
+                      <input type="hidden" name="action" value="update">
+                      <input type="hidden" name="id" value="{{ edit_trx.id }}">
+                    {% else %}
+                      <input type="hidden" name="action" value="create">
+                    {% endif %}
+
+                    <div class="form-group">
+                      <label>Tanggal</label>
+                      <input type="date" name="date" class="form-control"
+                             value="{{ edit_trx.date.strftime('%Y-%m-%d') if edit_trx and edit_trx.date else '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Nama Pelanggan</label>
+                      {% set current_customer = edit_trx.customer_username if edit_trx and edit_trx.customer_username is defined else '' %}
+                      <select name="customer" class="form-control" required>
+                        <option value="">-- Pilih Pelanggan --</option>
+                        {% for u in customers %}
+                        <option value="{{ u.username }}" {% if u.username == current_customer %}selected{% endif %}>
+                          {{ u.full_name }} ({{ u.username }})
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Layanan</label>
+                      {% set current_service_id = edit_trx.service_id if edit_trx and edit_trx.service_id is defined else '' %}
+                      <select name="service" class="form-control" required>
+                        <option value="">-- Pilih Layanan --</option>
+                        {% for s in services %}
+                        <option value="{{ s.id }}" {% if s.id == current_service_id %}selected{% endif %}>
+                          {{ s.name }} - Rp {{ "{:,.0f}".format(s.price) }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Sparepart (opsional)</label>
+                      {% set current_spare_id = edit_trx.sparepart_id if edit_trx and edit_trx.sparepart_id is defined else '' %}
+                      <select name="sparepart" class="form-control">
+                        <option value="">-- Tanpa Sparepart --</option>
+                        {% for p in spareparts %}
+                        <option value="{{ p.id }}" {% if p.id == current_spare_id %}selected{% endif %}>
+                          {{ p.name }} - Rp {{ "{:,.0f}".format(p.price) }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Status</label>
+                      {% set current_status = edit_trx.status if edit_trx else 'Proses' %}
+                      <select name="status" class="form-control">
+                        <option value="Proses" {% if current_status == 'Proses' %}selected{% endif %}>Proses</option>
+                        <option value="Selesai" {% if current_status == 'Selesai' %}selected{% endif %}>Selesai</option>
+                        <option value="Dibatalkan" {% if current_status == 'Dibatalkan' %}selected{% endif %}>Dibatalkan</option>
+                      </select>
+                    </div>
+
+                    <button type="submit" class="filled-button mt-2">
+                      {% if edit_trx %}Update{% else %}Simpan{% endif %}
+                    </button>
+                    {% if edit_trx %}
+                    <a href="{{ url_for('manage_transactions') }}" class="border-button mt-2">Batal</a>
+                    {% endif %}
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>

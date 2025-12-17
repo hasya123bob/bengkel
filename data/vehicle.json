@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "plate": "B 2323 MD",
+    "type": "Avanza",
+    "customer_name": "Joko",
+    "customer_phone": "08932932323",
+    "complaint": "klotok klotok",
+    "status": "Menunggu Diagnosa"
+  }
+]

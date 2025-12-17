@@ -1,0 +1,85 @@
+[
+  {
+    "id": 1,
+    "customer_username": "tes",
+    "customer_name": "tes",
+    "date": "0111-11-11",
+    "time": "20:00",
+    "service": "Service Berat",
+    "sparepart": "Kampas Rem Depan",
+    "note": "mesin klotok",
+    "status": "Sudah dibuat transaksi"
+  },
+  {
+    "id": 2,
+    "customer_username": "tes",
+    "customer_name": "tes",
+    "date": "0001-11-11",
+    "time": "11:11",
+    "service": "Ganti Oli",
+    "sparepart": "Kampas Rem Depan",
+    "note": "123",
+    "status": "Sudah dibuat transaksi"
+  },
+  {
+    "id": 3,
+    "customer_username": "tes",
+    "customer_name": "tes",
+    "date": "222222-02-02",
+    "time": "22:22",
+    "service": "Ganti Oli",
+    "sparepart": "agoy",
+    "note": "asdas",
+    "status": "Sudah dibuat transaksi"
+  },
+  {
+    "id": 4,
+    "customer_username": "tes",
+    "customer_name": "tes",
+    "date": "0123-03-11",
+    "time": "04:23",
+    "service": "Service Ringan",
+    "sparepart": "Kampas Rem Depan",
+    "note": "awikwok",
+    "status": "Sudah dibuat transaksi"
+  },
+  {
+    "id": 5,
+    "customer_username": "tes",
+    "customer_name": "tes",
+    "date": "1111-11-11",
+    "time": "11:11",
+    "service": "Ganti Oli",
+    "sparepart": "Kampas Rem Depan",
+    "note": "ncet ncet klotok klotok",
+    "status": "Sudah dibuat transaksi"
+  },
+  {
+    "id": 6,
+    "customer_username": "tes",
+    "customer_name": "tes",
+    "date": "2025-12-01",
+    "time": "10:00",
+    "service": "Service Ringan",
+    "sparepart": "Kampas Rem Depan",
+    "note": "ncet ncet",
+    "status": "Sudah dibuat transaksi"
+  },
+  {
+    "id": 7,
+    "customer_username": "tes",
+    "customer_name": "tes",
+    "date": "2025-12-02",
+    "time": "09:00",
+    "service": "Service Berat",
+    "spareparts": [
+      "Oli Mesin 10W-40",
+      "Kampas Rem Depan",
+      "Busi",
+      "agoy"
+    ],
+    "spareparts_text": "Oli Mesin 10W-40, Kampas Rem Depan, Busi, agoy",
+    "note": "asd",
+    "status": "Sudah dibuat transaksi"
+  }
+]

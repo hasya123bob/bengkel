@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Manajemen Karyawan">
+    <meta name="author" content="Owner">
+
+    <title>Manajemen Karyawan</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+
+</head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Sidebar sama seperti owner_dashboard -->
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Owner Bengkel
+        </div>
+        <ul>
+            <li class="menu-title">Menu Utama</li>
+          <li><a href="{{ url_for('owner_dashboard') }}" >Dashboard Owner</a></li>
+          <li><a href="{{ url_for('manage_employees') }}" class="active">Manajemen Karyawan</a></li>
+          <li><a href="{{ url_for('manage_services') }}" >Manajemen Layanan Bengkel</a></li>
+          <li><a href="{{ url_for('manage_spareparts') }}">Manajemen Sparepart</a></li>
+          <li><a href="{{ url_for('manage_transactions') }}">Manajemen Transaksi</a></li>
+          <li><a href="{{ url_for('owner_reports') }}">Laporan</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Manajemen Karyawan</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">test</span>
+            <span class="badge badge-secondary">Owner</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main container-fluid mt-4">
+          <div class="row">
+            <!-- Form Tambah/Edit -->
+            <div class="col-lg-5 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">
+                    {% if edit_employee %}
+                      Edit Karyawan
+                    {% else %}
+                      Tambah Karyawan
+                    {% endif %}
+                  </h5>
+                </div>
+                <div class="card-body">
+                  {% if message %}
+                  <div class="alert alert-danger">{{ message }}</div>
+                  {% endif %}
+
+                  <form method="post" action="{{ url_for('manage_employees') }}">
+                    {% if edit_employee %}
+                      <input type="hidden" name="action" value="update">
+                      <input type="hidden" name="id" value="{{ edit_employee.id }}">
+                    {% else %}
+                      <input type="hidden" name="action" value="create">
+                    {% endif %}
+
+                    <div class="form-group">
+                      <label>Nama</label>
+                      <input type="text" name="name" class="form-control"
+                             value="{{ edit_employee.name if edit_employee else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Posisi</label>
+                      <input type="text" name="position" class="form-control"
+                             value="{{ edit_employee.position if edit_employee else '' }}" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Status</label>
+                      {% set current_status = edit_employee.status if edit_employee else 'Aktif' %}
+                      <select name="status" class="form-control">
+                        <option value="Aktif" {% if current_status == 'Aktif' %}selected{% endif %}>Aktif</option>
+                        <option value="Cuti" {% if current_status == 'Cuti' %}selected{% endif %}>Cuti</option>
+                        <option value="Nonaktif" {% if current_status == 'Nonaktif' %}selected{% endif %}>Nonaktif</option>
+                      </select>
+                    </div>
+
+                    <button type="submit" class="filled-button mt-2">
+                      {% if edit_employee %}Update{% else %}Simpan{% endif %}
+                    </button>
+
+                    {% if edit_employee %}
+                      <a href="{{ url_for('manage_employees') }}" class="border-button mt-2">Batal</a>
+                    {% endif %}
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabel Karyawan -->
+            <div class="col-lg-7 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Daftar Karyawan</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Nama</th>
+                          <th>Posisi</th>
+                          <th>Status</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for emp in employees %}
+                        <tr>
+                          <td>{{ emp.id }}</td>
+                          <td>{{ emp.name }}</td>
+                          <td>{{ emp.position }}</td>
+                          <td>{{ emp.status }}</td>
+                          <td>
+                            <!-- Edit: reload halaman dengan ?edit_id= -->
+                            <a href="{{ url_for('manage_employees', edit_id=emp.id) }}" class="btn btn-sm btn-primary">Edit</a>
+
+                            <!-- Delete: kirim action=delete -->
+                            <form action="{{ url_for('manage_employees') }}" method="post" style="display:inline;">
+                              <input type="hidden" name="action" value="delete">
+                              <input type="hidden" name="id" value="{{ emp.id }}">
+                              <button type="submit" class="btn btn-sm btn-danger"
+                                      onclick="return confirm('Hapus karyawan ini?');">
+                                Hapus
+                              </button>
+                            </form>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>

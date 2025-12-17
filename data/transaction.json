@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "date": "1111-11-11",
+    "customer_username": "tes",
+    "customer": "tes",
+    "service": "Ganti Oli",
+    "sparepart": "Kampas Rem Depan",
+    "price_service": 90000,
+    "price_spare": 55000.0,
+    "total": 145000.0,
+    "status": "Selesai",
+    "employee_id": 1,
+    "employee_name": "Budi"
+  },
+  {
+    "id": 2,
+    "date": "2025-12-01",
+    "customer_username": "tes",
+    "customer": "tes",
+    "service": "Service Ringan",
+    "sparepart": "Kampas Rem Depan",
+    "price_service": 150000,
+    "price_spare": 55000.0,
+    "total": 205000.0,
+    "status": "Selesai",
+    "employee_id": 1,
+    "employee_name": "Budi"
+  },
+  {
+    "id": 3,
+    "date": "2025-12-02",
+    "customer_username": "tes",
+    "customer": "tes",
+    "service": "Service Berat",
+    "sparepart": "Oli Mesin 10W-40, Kampas Rem Depan, Busi, agoy",
+    "price_service": 350000,
+    "price_spare": 175000.0,
+    "total": 525000.0,
+    "status": "Selesai",
+    "employee_id": 1,
+    "employee_name": "Budi"
+  }
+]

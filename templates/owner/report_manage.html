@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Laporan Bengkel">
+    <meta name="author" content="Owner">
+
+    <title>Laporan Bengkel</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Owner Bengkel
+        </div>
+        <ul>
+          <li class="menu-title">Menu Utama</li>
+          <li><a href="{{ url_for('owner_dashboard') }}">Dashboard Owner</a></li>
+          <li><a href="{{ url_for('manage_employees') }}">Manajemen Karyawan</a></li>
+          <li><a href="{{ url_for('manage_services') }}">Manajemen Layanan Bengkel</a></li>
+          <li><a href="{{ url_for('manage_spareparts') }}">Manajemen Sparepart</a></li>
+          <li><a href="{{ url_for('manage_transactions') }}">Manajemen Transaksi</a></li>
+          <li><a href="{{ url_for('owner_reports') }}" class="active">Laporan</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Laporan Bengkel</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">test</span>
+            <span class="badge badge-secondary">Owner</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main container-fluid mt-4">
+          <!-- Filter periode -->
+          <div class="card-section mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Filter Periode</h5>
+            </div>
+            <div class="card-body">
+              <form class="form-inline" method="get" action="{{ url_for('owner_reports') }}">
+                <div class="form-group mr-2">
+                  <label for="month" class="mr-2">Bulan</label>
+                  <select id="month" name="month" class="form-control">
+                    <option value="">Semua</option>
+                    {% for m in range(1,13) %}
+                    <option value="{{ m }}" {% if selected_month == m %}selected{% endif %}>{{ m }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group mr-2">
+                  <label for="year" class="mr-2">Tahun</label>
+                  <select id="year" name="year" class="form-control">
+                    <option value="">Semua</option>
+                    {% for y in range(2023, 2031) %}
+                    <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <button type="submit" class="filled-button ml-2">Terapkan</button>
+                <a href="{{ url_for('owner_reports') }}" class="border-button ml-2">Reset</a>
+              </form>
+            </div>
+          </div>
+
+          <!-- Ringkasan -->
+          <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Total Transaksi</div>
+                  <div class="value">{{ total_transaksi }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Total Pendapatan</div>
+                  <div class="value">Rp {{ "{:,.0f}".format(total_pendapatan) }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="card-stat">
+                <div class="card-body">
+                  <div class="label">Layanan Terlaris</div>
+                  {% if layanan_terlaris %}
+                  <div class="value">{{ layanan_terlaris[0].name }}</div>
+                  {% else %}
+                  <div class="value">-</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabel Layanan Terlaris + Transaksi -->
+          <div class="row">
+            <div class="col-lg-4 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Layanan Terlaris</h5>
+                </div>
+                <div class="card-body">
+                <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                  <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>Layanan</th>
+                          <th>Jumlah</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for item in layanan_terlaris %}
+                        <tr>
+                          <td>{{ item.name }}</td>
+                          <td>{{ item.count }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if not layanan_terlaris %}
+                        <tr>
+                          <td colspan="2" class="text-center">Belum ada data.</td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-8 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Daftar Transaksi</h5>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                    <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Tanggal</th>
+                          <th>Pelanggan</th>
+                          <th>Layanan</th>
+                          <th>Sparepart</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                          <td>{{ t.id }}</td>
+                          <td>{{ t.date }}</td>
+                          <td>{{ t.customer }}</td>
+                          <td>{{ t.service_name }}</td>
+                          <td>{{ t.sparepart_name or '-' }}</td>
+                          <td>Rp {{ "{:,.0f}".format(t.total or 0) }}</td>
+                          <td>{{ t.status }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if not transactions %}
+                        <tr>
+                          <td colspan="7" class="text-center">Belum ada data transaksi.</td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Booking Servis Bengkel Mobil">
+    <meta name="author" content="Customer">
+
+    <title>Booking Servis</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Sidebar -->
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Customer Bengkel Mobil
+        </div>
+        <ul>
+          <li class="menu-title">Menu Customer</li>
+          <li><a href="{{ url_for('customer_dashboard') }}">Dashboard Customer</a></li>
+          <li><a href="{{ url_for('customer_booking') }}" class="active">Booking Servis</a></li>
+          <li><a href="{{ url_for('customer_booking_history') }}">Riwayat Booking</a></li>
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <!-- Konten -->
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Booking Servis Mobil</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">
+              {{ customer_name }}
+            </span>
+            <span class="badge badge-info">Customer</span>
+          </div>
+        </div>
+
+        <div class="dashboard-main container-fluid mt-4">
+          <div class="row">
+            <!-- Form booking -->
+            <div class="col-lg-12 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-3">Form Booking Servis</h5>
+                </div>
+                <div class="card-body">
+                  {% if message %}
+                  <div class="alert alert-success">{{ message }}</div>
+                  {% endif %}
+
+                  <form method="post" action="{{ url_for('customer_booking') }}">
+                    <div class="form-group">
+                      <label>Tanggal Booking</label>
+                      <input type="date" name="date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Waktu Perkiraan Datang</label>
+                      <input type="time" name="time" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                      <label>Jenis Layanan</label>
+                      <select name="service" class="form-control" required>
+                        <option value="">-- Pilih Layanan --</option>
+                        {% for s in services %}
+                        <option value="{{ s.name }}">{{ s.name }} (Rp {{ "{:,.0f}".format(s.price) }})</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Tambah Sparepart ke Keranjang</label>
+                      <div class="form-row">
+                        <div class="col-7">
+                          <select id="spare-select" class="form-control">
+                            <option value="">-- Pilih Sparepart --</option>
+                            {% for p in spareparts %}
+                            <option value="{{ p.name }}" data-price="{{ p.price }}">
+                              {{ p.name }} (stok: {{ p.stock }}, Rp {{ "{:,.0f}".format(p.price) }})
+                            </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="col-3">
+                          <input type="number" id="spare-qty" class="form-control" min="1" value="1">
+                        </div>
+                        <div class="col-2">
+                          <button type="button" class="btn btn-secondary btn-block" onclick="addToCart()">Tambah</button>
+                        </div>
+                      </div>
+                      <small class="form-text text-muted">
+                        Pilih sparepart lalu klik Tambah untuk memasukkan ke keranjang.
+                      </small>
+                    </div>
+
+                    <!-- Tabel keranjang -->
+                    <div class="form-group mt-3">
+                      <label>Keranjang Sparepart</label>
+                      <div class="table-responsive">
+                        <table class="table table-sm table-striped mb-0">
+                          <thead>
+                            <tr>
+                              <th>Nama</th>
+                              <th>Qty</th>
+                              <th>Per Item</th>
+                              <th>Subtotal</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody id="cart-body">
+                            <!-- baris keranjang akan diisi JS -->
+                          </tbody>
+                        </table>
+                      </div>
+                      <!-- total tampilan saja -->
+                      <div class="mt-2">
+                        <strong>Total Sparepart: </strong>Rp <span id="cart-total">0</span>
+                      </div>
+                    </div>
+
+                    <!-- hidden untuk dikirim ke server -->
+                    <input type="hidden" name="cart_json" id="cart_json">
+
+
+                    <div class="form-group">
+                      <label>Keluhan / Catatan Tambahan</label>
+                      <textarea name="note" class="form-control" rows="3" placeholder="Contoh: mesin terdengar berisik saat jalan..."></textarea>
+                    </div>
+                    <button type="submit" class="filled-button mt-2">Kirim Booking</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Riwayat booking -->
+          </div>
+        </div> <!-- /.dashboard-main -->
+      </div> <!-- /.dashboard-content -->
+    </div> <!-- /.dashboard-wrapper -->
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+      let cart = [];
+
+      function formatRupiah(x) {
+        return x.toLocaleString('id-ID');
+      }
+
+      function renderCart() {
+        const tbody = document.getElementById('cart-body');
+        const totalSpan = document.getElementById('cart-total');
+        const inputJson = document.getElementById('cart_json');
+
+        tbody.innerHTML = '';
+        let total = 0;
+
+        cart.forEach((item, index) => {
+          const subtotal = item.price * item.qty;
+          total += subtotal;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.qty}</td>
+            <td>Rp ${formatRupiah(item.price)}</td>
+            <td>Rp ${formatRupiah(subtotal)}</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">X</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        totalSpan.textContent = formatRupiah(total);
+        inputJson.value = JSON.stringify(cart);
+      }
+
+      function addToCart() {
+        const select = document.getElementById('spare-select');
+        const qtyInput = document.getElementById('spare-qty');
+        const name = select.value;
+        const price = parseFloat(select.selectedOptions[0]?.getAttribute('data-price') || '0');
+        const qty = parseInt(qtyInput.value || '1');
+
+        if (!name) {
+          alert('Pilih sparepart dulu.');
+          return;
+        }
+        if (qty <= 0) {
+          alert('Qty minimal 1.');
+          return;
+        }
+
+        // kalau sudah ada di cart, tambah qty
+        const existing = cart.find(item => item.name === name);
+        if (existing) {
+          existing.qty += qty;
+        } else {
+          cart.push({ name, price, qty });
+        }
+
+        renderCart();
+      }
+
+      function removeFromCart(index) {
+        cart.splice(index, 1);
+        renderCart();
+      }
+
+      // inisialisasi
+      renderCart();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Distribusi Pekerjaan ke Karyawan">
+    <meta name="author" content="Admin">
+
+    <title>Distribusi ke Karyawan</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-finance-business.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  </head>
+
+  <body>
+    <div class="dashboard-wrapper">
+      <!-- Sidebar -->
+      <div class="dashboard-sidebar">
+        <div class="logo">
+          Admin Iwan Bengkel
+        </div>
+        <ul>
+          <li class="menu-title">Menu Admin</li>
+          <li><a href="{{ url_for('admin_dashboard') }}">Dashboard Admin</a></li>
+          <li><a href="{{ url_for('admin_jobs') }}" class="active">Distribusi ke Karyawan</a></li>
+          <li><a href="{{ url_for('admin_stock') }}">Validasi Stok Sparepart</a></li>
+          <li><a href="{{ url_for('admin_report') }}">Laporan ke Pemilik</a></li>
+
+          <li class="menu-title">Akses</li>
+          <li><a href="{{ url_for('index') }}">Logout</a></li>
+        </ul>
+      </div>
+
+      <!-- Konten -->
+      <div class="dashboard-content">
+        <div class="dashboard-topbar">
+          <h4>Distribusi Pekerjaan ke Karyawan</h4>
+          <div>
+            <span style="margin-right:15px; font-size:14px;">{{ session.get('username','admin') }}</span>
+            <span class="badge badge-primary">Admin</span>
+          </div>
+        </div>
+          <div class="row">
+            <div class="col-lg-12 mb-4">
+              <div class="card-section">
+                <div class="card-header">
+                </div>
+                <div class="card-body">
+                  <h5 class="mb-0">Daftar Transaksi & Penugasan</h5>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Pelanggan</th>
+                          <th>Layanan</th>
+                          <th>Total</th>
+                          <th>Karyawan</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                          <td>{{ t.id }}</td>
+                          <td>{{ t.customer }}</td>
+                          <td>{{ t.service_name }}</td>
+                          <td>Rp {{ "{:,.0f}".format(t.total) }}</td>
+                          <td>
+                            {% if t.employee_name %}
+                              {{ t.employee_name }}
+                            {% else %}
+                              <span class="text-muted">Belum ditugaskan</span>
+                            {% endif %}
+                          </td>
+                          <td>{{ t.status }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if not transactions %}
+                        <tr>
+                          <td colspan="6" class="text-center">Belum ada transaksi.</td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-8 mb-4">
+                
+              <!-- Booking dari customer -->
+              <div class="card-section mb-4">
+                <div class="card-header">
+                  <h5 class="mb-0">Booking Servis dari Customer</h5>
+                </div>
+                <div class="card-body">
+                  {% if message %}
+                  <div class="alert alert-danger">{{ message }}</div>
+                  {% endif %}
+                  <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                    <table class="table table-sm table-striped mb-0">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Tanggal</th>
+                          <th>Jam</th>
+                          <th>Customer</th>
+                          <th>Layanan</th>
+                          <th>Sparepart</th>
+                          <th>Status</th>
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for b in bookings %}
+                        <tr>
+                          <td>{{ b.id }}</td>
+                          <td>{{ b.date }}</td>
+                          <td>{{ b.time }}</td>
+                          <td>{{ b.customer.full_name or b.customer.username }}</td>
+                          <td>{{ b.service.name if b.service else '-' }}</td>
+                          <td>
+                            {% if b.items %}
+                              <ol style="margin-bottom:0; padding-left:18px;">
+                                {% for item in b.items %}
+                                <li>{{ item.sparepart.name }} x{{ item.qty }}</li>
+                                {% endfor %}
+                              </ol>
+                            {% else %}
+                              -
+                            {% endif %}
+                          </td>
+                          <td>{{ b.status }}</td>
+                          <td>
+                            {% if b.status != 'Sudah dibuat transaksi' %}
+                            <form method="post" action="{{ url_for('admin_jobs') }}" style="display:inline;">
+                              <input type="hidden" name="action" value="create_from_booking">
+                              <input type="hidden" name="booking_id" value="{{ b.id }}">
+                              <button type="submit" class="btn btn-sm btn-primary">Buat Transaksi</button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted">Sudah diproses</span>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not bookings %}
+                        <tr>
+                          <td colspan="8" class="text-center">Belum ada booking dari customer.</td>
+                        </tr>
+                        {% endif %}
+                        
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-lg-4 mb-4">
+                
+              <!-- Form penugasan -->
+              <div class="card-section">
+                <div class="card-header">
+                  <h5 class="mb-0">Buat Penugasan</h5>
+                </div>
+                <div class="card-body">
+                  <form method="post" action="{{ url_for('admin_jobs') }}">
+                    <input type="hidden" name="action" value="assign_job">
+                    <div class="form-group">
+                      <label>Pilih Transaksi</label>
+                    <select name="trx_id" class="form-control" required>
+                      <option value="">-- Pilih Transaksi --</option>
+                      {% for t in transactions %}
+                        {% if t.status != 'Selesai' %}
+                        <option value="{{ t.id }}">
+                          ID {{ t.id }} - {{ t.customer }} - {{ t.service_name }} (Rp {{ "{:,.0f}".format(t.total or 0) }})
+                        </option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Pilih Karyawan (Mekanik)</label>
+                      <select name="emp_id" class="form-control" required>
+                        <option value="">-- Pilih Karyawan --</option>
+                        {% for e in employees %}
+                        <option value="{{ e.id }}">{{ e.name }} - {{ e.position }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                        
+                    <button type="submit" class="filled-button mt-2">Simpan Penugasan</button>
+                    
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>

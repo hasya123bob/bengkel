@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Service Ringan",
+    "price": 150000,
+    "description": "Pemeriksaan dan penyetelan dasar"
+  },
+  {
+    "id": 2,
+    "name": "Service Berat",
+    "price": 350000,
+    "description": "Perbaikan menyeluruh dan penggantian komponen"
+  },
+  {
+    "id": 3,
+    "name": "Ganti Oli",
+    "price": 90000,
+    "description": "Penggantian oli mesin"
+  }
+]
